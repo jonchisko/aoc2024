@@ -52,10 +52,10 @@ impl Solution for Day3 {
                         digit_index += 1;
                     }
 
-                    index += digit_index-1;
+                    index += digit_index - 1;
                     pattern_index += 1;
                 }
-                
+
                 if data_chars[index + pattern_index] != pattern_chars[pattern_index] {
                     index = if data_chars[index + pattern_index] == 'm' {
                         index + pattern_index
@@ -78,10 +78,18 @@ impl Solution for Day3 {
             }
         }
 
-        println!("{:?}", numbers.iter().step_by(2).zip(numbers.iter().skip(1).step_by(2)).map(|pair| *pair.0 as u32 * *pair.1 as u32).sum::<u32>())
+        println!(
+            "{:?}",
+            numbers
+                .iter()
+                .step_by(2)
+                .zip(numbers.iter().skip(1).step_by(2))
+                .map(|pair| *pair.0 as u32 * *pair.1 as u32)
+                .sum::<u32>()
+        )
     }
 
     fn solve2(&self) {
-        todo!()
+        println!("Not solved");
     }
 }

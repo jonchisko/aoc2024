@@ -3,6 +3,7 @@ use traits::Solution;
 pub mod day1;
 pub mod day2;
 pub mod day3;
+pub mod day4;
 pub mod traits;
 
 fn main() {
@@ -14,6 +15,9 @@ fn main() {
 
     let day3 = day3::Day3::new();
     solve(day3);
+
+    let day4 = day4::Day4::new();
+    solve(day4);
 }
 
 fn solve<T>(solution: T)
