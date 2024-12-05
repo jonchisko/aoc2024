@@ -4,6 +4,7 @@ pub mod day1;
 pub mod day2;
 pub mod day3;
 pub mod day4;
+pub mod day5;
 pub mod traits;
 
 fn main() {
@@ -18,6 +19,9 @@ fn main() {
 
     let day4 = day4::Day4::new();
     solve(day4);
+
+    let day5 = day5::Day5::new();
+    solve(day5);
 }
 
 fn solve<T>(solution: T)
