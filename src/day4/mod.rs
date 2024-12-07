@@ -20,12 +20,6 @@ impl Grid {
             width,
         }
     }
-
-    fn number_of_elements(&self) -> usize {
-        self.data.len()
-    }
-
-    //fn get_char_with_linear_index
 }
 
 impl Day4 {
@@ -52,15 +46,25 @@ impl Day4 {
         Grid::new(grid, height, width)
     }
 
-    fn find_ne(x: usize, y: usize, grid_width: usize, grid_height: usize, pattern: Vec<char>, grid: &[char]) -> bool{
-        let pattern_delta = pattern.len()/2;
-        if x + pattern_delta < grid_width 
-        && (y as i32 - pattern_delta as i32) >= 0
-        && (x as i32 - pattern_delta as i32) >= 0
-        && y + pattern_delta < grid_height {
+    fn find_ne(
+        x: usize,
+        y: usize,
+        grid_width: usize,
+        grid_height: usize,
+        pattern: Vec<char>,
+        grid: &[char],
+    ) -> bool {
+        let pattern_delta = pattern.len() / 2;
+        if x + pattern_delta < grid_width
+            && (y as i32 - pattern_delta as i32) >= 0
+            && (x as i32 - pattern_delta as i32) >= 0
+            && y + pattern_delta < grid_height
+        {
             let mut found: bool = true;
             for index in (-1)..=(pattern_delta as i32) {
-                if grid[(y as i32 - index) as usize * grid_width + (x as i32 + index) as usize] != pattern[(index + pattern_delta as i32) as usize] {
+                if grid[(y as i32 - index) as usize * grid_width + (x as i32 + index) as usize]
+                    != pattern[(index + pattern_delta as i32) as usize]
+                {
                     found = false;
                     break;
                 }
@@ -72,15 +76,25 @@ impl Day4 {
         false
     }
 
-    fn find_se(x: usize, y: usize, grid_width: usize, grid_height: usize, pattern: Vec<char>, grid: &[char]) -> bool{
-        let pattern_delta = pattern.len()/2;
-        if x + pattern_delta < grid_width 
-        && (y as i32 - pattern_delta as i32) >= 0
-        && (x as i32 - pattern_delta as i32) >= 0
-        && y + pattern_delta < grid_height {
+    fn find_se(
+        x: usize,
+        y: usize,
+        grid_width: usize,
+        grid_height: usize,
+        pattern: Vec<char>,
+        grid: &[char],
+    ) -> bool {
+        let pattern_delta = pattern.len() / 2;
+        if x + pattern_delta < grid_width
+            && (y as i32 - pattern_delta as i32) >= 0
+            && (x as i32 - pattern_delta as i32) >= 0
+            && y + pattern_delta < grid_height
+        {
             let mut found: bool = true;
             for index in (-1)..=(pattern_delta as i32) {
-                if grid[(y as i32 + index) as usize * grid_width + (x as i32 + index) as usize] != pattern[(index + pattern_delta as i32) as usize] {
+                if grid[(y as i32 + index) as usize * grid_width + (x as i32 + index) as usize]
+                    != pattern[(index + pattern_delta as i32) as usize]
+                {
                     found = false;
                     break;
                 }
@@ -106,7 +120,9 @@ impl Solution for Day4 {
             if x + pattern_delta < self.grid_data.width {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[y * self.grid_data.width + (x + index)] != self.pattern[index] {
+                    if self.grid_data.data[y * self.grid_data.width + (x + index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -118,10 +134,13 @@ impl Solution for Day4 {
             }
 
             //  South East
-            if x + pattern_delta < self.grid_data.width && y + pattern_delta < self.grid_data.height {
+            if x + pattern_delta < self.grid_data.width && y + pattern_delta < self.grid_data.height
+            {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y + index) * self.grid_data.width + (x + index)] != self.pattern[index] {
+                    if self.grid_data.data[(y + index) * self.grid_data.width + (x + index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -136,7 +155,9 @@ impl Solution for Day4 {
             if y + pattern_delta < self.grid_data.height {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y + index) * self.grid_data.width + x] != self.pattern[index] {
+                    if self.grid_data.data[(y + index) * self.grid_data.width + x]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -151,7 +172,9 @@ impl Solution for Day4 {
             if (x as i32 - pattern_delta as i32) >= 0 && y + pattern_delta < self.grid_data.height {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y + index) * self.grid_data.width + (x - index)] != self.pattern[index] {
+                    if self.grid_data.data[(y + index) * self.grid_data.width + (x - index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -166,7 +189,9 @@ impl Solution for Day4 {
             if (x as i32 - pattern_delta as i32) >= 0 {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[y * self.grid_data.width + (x - index)] != self.pattern[index] {
+                    if self.grid_data.data[y * self.grid_data.width + (x - index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -181,7 +206,9 @@ impl Solution for Day4 {
             if (x as i32 - pattern_delta as i32) >= 0 && (y as i32 - pattern_delta as i32) >= 0 {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y - index) * self.grid_data.width + (x - index)] != self.pattern[index] {
+                    if self.grid_data.data[(y - index) * self.grid_data.width + (x - index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -196,7 +223,9 @@ impl Solution for Day4 {
             if (y as i32 - pattern_delta as i32) >= 0 {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y - index) * self.grid_data.width + x] != self.pattern[index] {
+                    if self.grid_data.data[(y - index) * self.grid_data.width + x]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -211,7 +240,9 @@ impl Solution for Day4 {
             if x + pattern_delta < self.grid_data.width && (y as i32 - pattern_delta as i32) >= 0 {
                 let mut found: bool = true;
                 for index in 0..self.pattern.len() {
-                    if self.grid_data.data[(y - index) * self.grid_data.width + (x + index)] != self.pattern[index] {
+                    if self.grid_data.data[(y - index) * self.grid_data.width + (x + index)]
+                        != self.pattern[index]
+                    {
                         found = false;
                         break;
                     }
@@ -228,22 +259,44 @@ impl Solution for Day4 {
 
     fn solve2(&self) {
         let mut number_of_occurences: usize = 0;
-        let pattern_delta = 3 - 1;
 
         for i in 0..self.grid_data.data.len() {
             let x = i % self.grid_data.width;
             let y = i / self.grid_data.width;
-            
+
             if self.grid_data.data[i] != 'A' {
                 continue;
             }
 
-            if (Self::find_ne(x, y, self.grid_data.width, self.grid_data.height, "MAS".chars().collect(), &self.grid_data.data[..])
-            || Self::find_ne(x, y, self.grid_data.width, self.grid_data.height, "SAM".chars().collect(), &self.grid_data.data[..]))
-            && (Self::find_se(x, y, self.grid_data.width, self.grid_data.height, "MAS".chars().collect(), &self.grid_data.data[..])
-            || Self::find_se(x, y, self.grid_data.width, self.grid_data.height, "SAM".chars().collect(), &self.grid_data.data[..]))
-             
-             {
+            if (Self::find_ne(
+                x,
+                y,
+                self.grid_data.width,
+                self.grid_data.height,
+                "MAS".chars().collect(),
+                &self.grid_data.data[..],
+            ) || Self::find_ne(
+                x,
+                y,
+                self.grid_data.width,
+                self.grid_data.height,
+                "SAM".chars().collect(),
+                &self.grid_data.data[..],
+            )) && (Self::find_se(
+                x,
+                y,
+                self.grid_data.width,
+                self.grid_data.height,
+                "MAS".chars().collect(),
+                &self.grid_data.data[..],
+            ) || Self::find_se(
+                x,
+                y,
+                self.grid_data.width,
+                self.grid_data.height,
+                "SAM".chars().collect(),
+                &self.grid_data.data[..],
+            )) {
                 number_of_occurences += 1;
             }
         }
