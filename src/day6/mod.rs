@@ -1,4 +1,7 @@
-use std::{collections::HashSet, fs::File};
+use std::{
+    collections::{HashMap, HashSet},
+    fs::File,
+};
 
 use crate::traits::Solution;
 
@@ -93,7 +96,61 @@ impl Solution for Day6 {
     }
 
     fn solve2(&self) {
-        println!("Day 6 not yet solved.");
+        let mut guard_position = None;
+        let mut guard_direction = None;
+
+        for i in 0..self.world.len() {
+            if let WorldElement::Guard(direction) = self.world[i] {
+                guard_position = Some(i);
+                guard_direction = Some(direction);
+            }
+        }
+
+        // Should have just used i32 everywhere ...
+        let mut position = self.from_linear_to_x_y(guard_position.unwrap());
+        let mut direction = guard_direction.unwrap();
+        let mut previous_positions: HashMap<(usize, usize), GuardDirection> = HashMap::new();
+        let mut delta;
+        let mut next;
+        let mut possible_obstacles: usize = 0;
+
+        loop {
+            if !self.is_position_in_world(position.0 as i32, position.1 as i32) {
+                break;
+            }
+
+            delta = direction.get_delta_position();
+            next = (position.0 as i32 + delta.0, position.1 as i32 + delta.1);
+
+            if self.is_position_in_world(next.0, next.1) {
+                next = match self.world[self.from_x_y_to_linear(next.0 as usize, next.1 as usize)] {
+                    WorldElement::Obstacle => {
+                        direction = direction.turn_direction();
+                        delta = direction.get_delta_position();
+
+                        (position.0 as i32 + delta.0, position.1 as i32 + delta.1)
+                    }
+                    _ => {
+                        println!("current position {:?}", position);
+                        println!("Old direction {:?}", previous_positions.get(&position));
+                        println!("Current direction {:?}", direction);
+                        println!("Turn direction {:?}", direction.turn_direction());
+                        if let Some(old_direction) = previous_positions.get(&position) {
+                            if *old_direction == direction.turn_direction() {
+                                possible_obstacles += 1;
+                            }
+                        }
+
+                        next
+                    }
+                };
+            }
+
+            previous_positions.insert(position, direction);
+            position = (next.0 as usize, next.1 as usize);
+        }
+
+        println!("Day 6.2: {}", possible_obstacles);
     }
 }
 
@@ -116,7 +173,7 @@ impl From<char> for WorldElement {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum GuardDirection {
     North,
     East,
