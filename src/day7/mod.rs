@@ -83,6 +83,7 @@ impl Day7 {
     }
 }
 
+// Solved with recursion -> could also do it with a queue and iterative approach
 impl Solution for Day7 {
     fn solve1(&self) {
         let mut total_sum: i64 = 0;
