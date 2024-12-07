@@ -1,4 +1,7 @@
-use std::{collections::HashSet, fs::File};
+use std::{
+    collections::{HashMap, HashSet},
+    fs::File,
+};
 
 use crate::traits::Solution;
 
@@ -43,6 +46,52 @@ impl Day6 {
 
     fn is_position_in_world(&self, x: i32, y: i32) -> bool {
         x < self.world_size.0 as i32 && x >= 0 && y < self.world_size.1 as i32 && y >= 0
+    }
+
+    fn check_in_line_if_cycle_possible(
+        &self,
+        position: (i32, i32),
+        mut direction: GuardDirection,
+        previous_positions: &HashMap<(i32, i32), Vec<GuardDirection>>,
+    ) -> bool {
+        //println!("Searching at {:?}", position);
+        let mut current_position = position;
+        let mut previous_positions = previous_positions.clone();
+
+        loop {
+            let delta = direction.get_delta_position();
+            let possible_next_position =
+                (current_position.0 + delta.0, current_position.1 + delta.1);
+
+            if !self.is_position_in_world(possible_next_position.0, possible_next_position.1) {
+                return false;
+            }
+
+            if WorldElement::Obstacle
+                == self.world[self.from_x_y_to_linear(
+                    possible_next_position.0 as usize,
+                    possible_next_position.1 as usize,
+                )]
+            {
+                direction = direction.turn_direction();
+                let delta = direction.get_delta_position();
+                current_position = (current_position.0 + delta.0, current_position.1 + delta.1);
+            } else {
+                current_position = possible_next_position;
+            }
+
+            if let Some(previous_directions) = previous_positions.get(&current_position) {
+                if previous_directions.contains(&direction) {
+                    //println!("{:?}", current_position);
+                    return true;
+                }
+            }
+
+            previous_positions
+                .entry(current_position)
+                .or_insert(vec![direction])
+                .push(direction);
+        }
     }
 }
 
@@ -93,16 +142,78 @@ impl Solution for Day6 {
     }
 
     fn solve2(&self) {
-        println!("Day 6 not yet solved.");
+        let mut possible_obstacles: usize = 0;
+        let mut guard_position = None;
+        let mut guard_direction = None;
+
+        for i in 0..self.world.len() {
+            if let WorldElement::Guard(direction) = self.world[i] {
+                guard_position = Some(i);
+                guard_direction = Some(direction);
+            }
+        }
+
+        // Should have just used i32 everywhere ...
+        let mut position = self.from_linear_to_x_y(guard_position.unwrap());
+        let mut direction = guard_direction.unwrap();
+        let mut previous_positions: HashMap<(i32, i32), Vec<GuardDirection>> = HashMap::new();
+        let mut delta;
+        let mut next;
+
+        loop {
+            if !self.is_position_in_world(position.0 as i32, position.1 as i32) {
+                break;
+            }
+
+            delta = direction.get_delta_position();
+            next = (position.0 as i32 + delta.0, position.1 as i32 + delta.1);
+
+            if self.is_position_in_world(next.0, next.1) {
+                next = match self.world[self.from_x_y_to_linear(next.0 as usize, next.1 as usize)] {
+                    WorldElement::Obstacle => {
+                        direction = direction.turn_direction();
+                        delta = direction.get_delta_position();
+
+                        (position.0 as i32 + delta.0, position.1 as i32 + delta.1)
+                    }
+                    _ => {
+                        if self.check_in_line_if_cycle_possible(
+                            (position.0 as i32, position.1 as i32),
+                            direction.turn_direction(),
+                            &previous_positions,
+                        ) {
+                            possible_obstacles += 1;
+                        }
+
+                        next
+                    }
+                };
+            }
+
+            if self.check_in_line_if_cycle_possible(
+                (position.0 as i32, position.1 as i32),
+                direction.turn_direction(),
+                &previous_positions,
+            ) {
+                possible_obstacles += 1;
+            }
+
+            previous_positions
+                .entry((position.0 as i32, position.1 as i32))
+                .or_insert(vec![direction])
+                .push(direction);
+            position = (next.0 as usize, next.1 as usize);
+        }
+
+        println!("Day 6.2: {}", possible_obstacles);
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 enum WorldElement {
     Obstacle,
     Empty,
     Guard(GuardDirection),
-    GuardPath,
 }
 
 impl From<char> for WorldElement {
@@ -116,7 +227,7 @@ impl From<char> for WorldElement {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 enum GuardDirection {
     North,
     East,
