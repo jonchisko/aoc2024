@@ -7,10 +7,11 @@ pub mod day4;
 pub mod day5;
 pub mod day6;
 pub mod day7;
+pub mod day8;
 pub mod traits;
 
 fn main() {
-    let day1 = day1::Day1::new();
+    /* let day1 = day1::Day1::new();
     solve(day1);
 
     let day2 = day2::Day2::new();
@@ -29,7 +30,10 @@ fn main() {
     solve(day6);
 
     let day7 = day7::Day7::new();
-    solve(day7);
+    solve(day7); */
+
+    let day8 = day8::Day8::new();
+    solve(day8);
 }
 
 fn solve<T>(solution: T)
