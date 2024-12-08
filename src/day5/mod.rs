@@ -25,7 +25,9 @@ impl Day5 {
             .split('\n')
             .rev()
             .skip(1)
-            .take_while(|manual| !manual.is_empty())
+            .take_while(|manual| {
+                !manual.is_empty() && *manual != "\r"
+            })
             .map(|manual| {
                 manual
                     .trim()
@@ -43,7 +45,7 @@ impl Day5 {
         let mut mapping: HashMap<u8, HashSet<u8>> = HashMap::new();
 
         let processed_data = data
-            .split('\n')
+            .split("\r\n")
             .take_while(|pair| !pair.is_empty())
             .map(|pair| {
                 let mut pair = pair.split('|');
@@ -88,7 +90,8 @@ impl Solution for Day5 {
             }
         }
 
-        println!("{}", sum);
+        // Seems to not work anymore after I had to do some modifications for windows?
+        println!("Day 5, 1: {}", sum);
     }
 
     fn solve2(&self) {
@@ -143,6 +146,6 @@ impl Solution for Day5 {
             sum += *prioritized[prioritized.len() / 2].0 as u32;
         }
 
-        println!("{}", sum);
+        println!("Day 5, 2: {}", sum);
     }
 }
