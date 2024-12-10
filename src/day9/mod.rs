@@ -146,14 +146,13 @@ impl Solution for Day9 {
             sum += (pos as i32 * decoded[pos]) as i64;
         }
 
-        println!("Day 8.1: {}", sum);
+        println!("Day 9.1: {}", sum);
     }
 
     fn solve2(&self) {
         let mut decoded = self.decoded.clone();
         let mut empty_spaces = Self::get_empty_spaces(&decoded[..]);
 
-        let mut i = 0;
         let mut j = decoded.len() - 1;
 
         loop {
@@ -186,6 +185,6 @@ impl Solution for Day9 {
 
         //println!("Decoded {:?}", decoded);
 
-        println!("Day 8.2: {}", sum);
+        println!("Day 9.2: {}", sum);
     }
 }
