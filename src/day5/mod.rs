@@ -25,9 +25,7 @@ impl Day5 {
             .split('\n')
             .rev()
             .skip(1)
-            .take_while(|manual| {
-                !manual.is_empty() && *manual != "\r"
-            })
+            .take_while(|manual| !manual.is_empty() && *manual != "\r")
             .map(|manual| {
                 manual
                     .trim()

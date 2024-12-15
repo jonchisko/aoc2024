@@ -48,7 +48,12 @@ impl Day6 {
         x < self.world_size.0 as i32 && x >= 0 && y < self.world_size.1 as i32 && y >= 0
     }
 
-    fn next_move(&self, world: &Vec<WorldElement>, position: (i32, i32), direction: GuardDirection) -> ((i32, i32), GuardDirection) {
+    fn next_move(
+        &self,
+        world: &Vec<WorldElement>,
+        position: (i32, i32),
+        direction: GuardDirection,
+    ) -> ((i32, i32), GuardDirection) {
         let delta = direction.get_delta_position();
         let mut next = (position.0 + delta.0, position.1 + delta.1);
         let mut direction = direction;
@@ -58,7 +63,9 @@ impl Day6 {
         }
 
         // if one could place an obstacle also on previous paths, this would become inf loop in some case
-        while world[self.from_x_y_to_linear(next.0 as usize, next.1 as usize)] == WorldElement::Obstacle {
+        while world[self.from_x_y_to_linear(next.0 as usize, next.1 as usize)]
+            == WorldElement::Obstacle
+        {
             direction = direction.turn_direction();
             let delta = direction.get_delta_position();
             next = (position.0 + delta.0, position.1 + delta.1);
@@ -70,7 +77,7 @@ impl Day6 {
     fn check_in_line_if_cycle_possible(
         &self,
         position: (i32, i32),
-        mut direction : GuardDirection,
+        mut direction: GuardDirection,
         previous_positions: &HashMap<(i32, i32), Vec<GuardDirection>>,
         world: &mut Vec<WorldElement>,
         new_obstacle_pos: (i32, i32),
@@ -78,14 +85,19 @@ impl Day6 {
         //println!("Searching at {:?}", position);
         let mut current_position = position;
         let mut previous_positions = previous_positions.clone();
-        let previous_element = world[self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)];
-        world[self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)] = WorldElement::Obstacle;
-        
+        let previous_element = world
+            [self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)];
+        world[self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)] =
+            WorldElement::Obstacle;
+
         loop {
             let (next, new_direction) = self.next_move(&world, current_position, direction);
 
             if !self.is_position_in_world(next.0, next.1) {
-                world[self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)] = previous_element;
+                world[self.from_x_y_to_linear(
+                    new_obstacle_pos.0 as usize,
+                    new_obstacle_pos.1 as usize,
+                )] = previous_element;
                 return false;
             }
 
@@ -95,7 +107,10 @@ impl Day6 {
             if let Some(previous_directions) = previous_positions.get(&current_position) {
                 if previous_directions.contains(&direction) {
                     //println!("{:?}", current_position);
-                    world[self.from_x_y_to_linear(new_obstacle_pos.0 as usize, new_obstacle_pos.1 as usize)] = previous_element;
+                    world[self.from_x_y_to_linear(
+                        new_obstacle_pos.0 as usize,
+                        new_obstacle_pos.1 as usize,
+                    )] = previous_element;
                     return true;
                 }
             }
@@ -134,8 +149,8 @@ impl Solution for Day6 {
             }
             previous_positions.insert(position);
 
-            let (next, new_direction) = 
-            self.next_move(&world, (position.0 as i32, position.1 as i32), direction);
+            let (next, new_direction) =
+                self.next_move(&world, (position.0 as i32, position.1 as i32), direction);
 
             position = (next.0 as usize, next.1 as usize);
             direction = new_direction;
@@ -175,16 +190,17 @@ impl Solution for Day6 {
                 .or_insert(vec![direction])
                 .push(direction);
 
-            let (next, new_direction) = 
-            self.next_move(&world, (position.0 as i32, position.1 as i32), direction);
+            let (next, new_direction) =
+                self.next_move(&world, (position.0 as i32, position.1 as i32), direction);
 
-            if !previous_positions.contains_key(&next) && self.is_position_in_world(next.0, next.1) {
-                if self.check_in_line_if_cycle_possible( 
+            if !previous_positions.contains_key(&next) && self.is_position_in_world(next.0, next.1)
+            {
+                if self.check_in_line_if_cycle_possible(
                     (position.0 as i32, position.1 as i32),
                     direction.turn_direction(),
                     &previous_positions,
-                    &mut world, 
-                    next
+                    &mut world,
+                    next,
                 ) {
                     possible_obstacles.insert(next);
                     total_sum += 1;
@@ -195,7 +211,11 @@ impl Solution for Day6 {
             direction = new_direction;
         }
 
-        println!("Day 6.2: {}, total sum: {}", possible_obstacles.len(), total_sum);
+        println!(
+            "Day 6.2: {}, total sum: {}",
+            possible_obstacles.len(),
+            total_sum
+        );
     }
 }
 
